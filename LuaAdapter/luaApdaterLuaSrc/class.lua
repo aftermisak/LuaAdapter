@@ -9,9 +9,11 @@ print( "load class.lua" )
 local __all_classes__ = {
 	
 }
+
 local __all_classes_obj_metatable__ = {
 	
 }
+
 
 local createObjectMetatable --pre define
 
@@ -31,7 +33,8 @@ function luaAdapter_lua_createClassTable(className)
 	classTable.__Constructors__ = {}
 
 	classTable.__Destructor__ = function( ... )
-		error("not implement destructor")
+		-- error("not implement destructor")
+		-- print( "default destructor do nothing" )
 	end
 
 	classTable.__staticFuncTable__ = {}
@@ -60,14 +63,14 @@ function luaAdapter_lua_createClassTable(className)
 		local dataGet = table.__DataGetTable__[name]
 		if(dataGet) then return dataGet() end
 
-		error("does not have static field :" .. name)
+		error("do not have static field :" .. name)
 	end
 
 	mt.__newindex = function (table, name, value)
 		local dataSet = table.__DataSetTable__[name]
 		if dataSet then return dataSet( value ) end
 
-		error("does not have static data :" .. name)
+		error("do not have static data :" .. name)
 	end
 
 	classTable.newInstance = function( funcName, ...)
@@ -75,14 +78,13 @@ function luaAdapter_lua_createClassTable(className)
 		local func = classTable.__Constructors__[funcName]
 
 		if( func ) then
-			local instance = func(...)
+			local instance = func(...)-- userdata's metatable set by c code
 			return instance
 		end
 
-		error( "not have constrcutor " .. funcName )
+		error( "do not have constrcutor " .. funcName )
 		return nil
 	end
-
 
 	setmetatable(classTable, mt)
 	createObjectMetatable( className )
@@ -145,6 +147,11 @@ createObjectMetatable = function( className )
 		local dataMemberGet = findDataMemberGet(classTable, name);
 		if(dataMemberGet) then return dataMemberGet( userObj ) end
 
+		-- sp
+		if name == "no_destruction__" then 
+			return assert( classTable.__staticFuncTable__[name] )
+		end 
+
 		error( "object has no member field:" .. name )
 	end
 
@@ -157,8 +164,9 @@ createObjectMetatable = function( className )
 
 	mt.__gc = function( userObj )
 		local destructor = classTable.__Destructor__
-		destructor( userObj )
-		-- print( "destructor" )
+		if destructor then 
+			destructor( userObj )
+		end 
 	end
 	
 	return mt

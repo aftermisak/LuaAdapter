@@ -36,6 +36,8 @@ void Namespace::end(){
 }
 
 void Namespace::registerClass(const string& name, const type_info& clsInfo){
+	assert(!hasClass(name));
+
 	lua_pushstring(_L, "__classTable__");
 	lua_rawget(_L, -2);
 
@@ -53,7 +55,8 @@ void Namespace::registerClass(const string& name, const type_info& clsInfo){
 	lua_rawset(_L, -3);
 
 	lua_pop(_L, 1);//pop__classTable__
-
+	
+	__classNames.insert(name);
 	__clsTypeNameMap.insert(make_pair(clsInfo.hash_code(), name));
 }
 

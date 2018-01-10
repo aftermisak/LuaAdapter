@@ -1,14 +1,69 @@
 #include "Class.hpp"
 #include "Namespace.hpp"
 #include <cassert>
+
 using namespace LuaAdapter;
 
+namespace LuaAdapter {
+	struct RecordHash {
+	private:
+		const std::pair<unsigned, unsigned> __arg;
+	public:
+		explicit RecordHash(const std::pair<unsigned, unsigned>& arg) :__arg(arg){}
+		RecordHash(){}
+
+		inline static size_t gen_hash(const std::pair<unsigned, unsigned>& arg ) {
+			return (std::hash<unsigned>()(arg.first) << 2) + (std::hash<unsigned>()(arg.second) << 3);
+		}
+		size_t operator ()() const{
+			return gen_hash(__arg);
+		}
+		size_t operator ()(const std::pair<unsigned, unsigned>& arg) const {
+			return gen_hash(arg);
+		}
+	};
+
+	static std::unordered_multimap< std::pair<unsigned, unsigned>, int, RecordHash > quickOffsetRecord;
+}
+
+
+void LuaAdapter::addOffsetRecord(unsigned h1, unsigned h2, int offset) {
+	if (quickOffsetRecord.find(make_pair(h1, h2)) != quickOffsetRecord.end()) {
+		return;
+	}
+	quickOffsetRecord.insert(make_pair(make_pair(h1, h2), offset));
+	//inheritance
+	for (auto iter = quickOffsetRecord.begin(); iter != quickOffsetRecord.end(); ++iter) {
+		if (iter->first.first == h2) {
+			const auto more_offset = offset + iter->second;
+			addOffsetRecord(h1, iter->first.second, more_offset);
+		}
+	}
+
+	
+}
+std::pair<bool, int> LuaAdapter::getOffsetRecord(unsigned h1, unsigned h2) {
+	auto iter = quickOffsetRecord.find(make_pair(h1, h2));
+	if (iter == quickOffsetRecord.end()) {
+		return make_pair(false, 0);
+	}
+	return make_pair(true, iter->second);
+}
+
+
+
+
+static void luaadapter_no_destruction(ObjUserData* objUserData) {
+	objUserData->needDestruction = false;
+}
 
 Class::Class(lua_State* L, const string& name) :
 	_L(L),
 	_name(name)
 {
-
+	begin();
+	registerFunction(&luaadapter_no_destruction, "no_destruction__");
+	end();
 }
 
 void Class::begin(){

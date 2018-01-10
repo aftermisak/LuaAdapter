@@ -9,6 +9,7 @@
 #include "Class.hpp"
 #include <typeinfo>
 #include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
@@ -34,9 +35,14 @@ namespace LuaAdapter{
 
 		static string getClassNameByTypeInfo(const type_info& clsInfo);
 
+		bool hasClass(const string& name) const {
+			return __classNames.find(name) != __classNames.end();
+		}
+
 	private:
 		lua_State* _L;
 		const string _name;
+		std::unordered_set<string> __classNames;
 
 		typedef size_t class_hash;
 		static std::unordered_map<class_hash, string > __clsTypeNameMap;
@@ -53,16 +59,14 @@ namespace LuaAdapter{
 
 	template<typename T>
 	void Namespace::registerVariable(T* var, const string& name){
-		//data set
-		lua_pushstring(_L, "__dataSetTable__");
-		lua_rawget(_L, -2);
-		doRegisterVariableSet(_L, var, name);
-		lua_pop(_L, 1);
-
-		//data get
 		lua_pushstring(_L, "__dataGetTable__");
 		lua_rawget(_L, -2);
 		doRegisterVariableGet(_L, var, name);
+		lua_pop(_L, 1);
+
+		lua_pushstring(_L, "__dataSetTable__");
+		lua_rawget(_L, -2);
+		doRegisterVariableSet(_L, var, name);
 		lua_pop(_L, 1);
 	}
 }
