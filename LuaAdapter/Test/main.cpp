@@ -1,6 +1,8 @@
 
 #include "../Classes/LuaAdapter.hpp"
 #include "test_center.h"
+#include <iostream>
+#include <cstdlib>
 
 static int __luaErrorHook(lua_State* L) {
 
@@ -28,4 +30,5 @@ int main(int argc, char* argv[]){
 	la.init(L);
 
 	LuaAdapter::luaadapter_test();
+	system("pause");
 }
