@@ -1,9 +1,9 @@
 project(lua_adapter_test)
 
 include_directories( "LuaAdapter" )
-include_directories( "lua/lua-5.1.5/src" )
 
-aux_source_directory( ./lua/lua-5.1.5/src LUA_SRCS )
+include_directories( "lua/lua-5.1.5/src" )
+aux_source_directory( lua/lua-5.1.5/src LUA_SRCS )
 
 
 add_library( the_lua ${LUA_SRCS} )
