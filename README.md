@@ -14,7 +14,7 @@ extends_test 怎么注册类之间的继承关系<br/>
 construction_destruction 为类注册构造和析构，提供了一种策略来进行生命周期管理<br/>
 
 ## 关于生命周期管理
-  对象的生命周期管理，是一个便随着cpp开发的问题，如果你使用类似于cocos2d-x这类的引擎，那么
+　　对象的生命周期管理，是一个便随着cpp开发的问题，如果你使用类似于cocos2d-x这类的引擎，那么
 栈对象的创建释放可以自动使用其提供的 create retian release等方法来创建和管理。如果你的程序没
 有类似的管理，或者是不同的管理方式，LuaAdapter允许为类绑定构造和析构函数，并且为所有对象提供
 了一个成员方法，可以在lua层决定userdata被lua gc回收时是否调用析构函数，也就是可以在创建对象后
@@ -22,7 +22,7 @@ construction_destruction 为类注册构造和析构，提供了一种策略来�
 	
 ## 扩展
 扩展lua传入cpp时支持的类型 template<> LuaParm:<br/>
-    LuaParm支持了一些常见的数字，字符串，STL标准库类型，但是一旦使用，可能需要扩展，比如我的另外
+　　LuaParm支持了一些常见的数字，字符串，STL标准库类型，但是一旦使用，可能需要扩展，比如我的另外
 一个程序中，使用了glm库，需要向cpp传glm::vec3,glm::vec4等参数，那么就需要在LuaAdapter命名空间下
 实现以下内容:
 ```cpp
@@ -60,7 +60,7 @@ template<> struct LuaParm<const glm::vec4&> : public LuaParm<glm::vec4> {
 ```
 
 扩展cpp传入lua时支持的类型 template<> PushToLua:<br/>
-    与LuaParm类似，它是个反过程，它需要的是将一个对象正确创建并且压倒lua栈上。
+　　与LuaParm类似，它是个反过程，它需要的是将一个对象正确创建并且压倒lua栈上。
 
 ```cpp
 template< >
