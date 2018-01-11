@@ -71,7 +71,7 @@ namespace LuaAdapter {
 		}
 	};
 
-	template<typename T> struct PushToLua<std::list<T>> {
+	template<typename T> struct PushToLua<std::list<T> > {
 		static void push(lua_State* L, const std::list<T>& value) {
 			lua_newtable(L);
 			unsigned i = 1;
@@ -81,7 +81,7 @@ namespace LuaAdapter {
 			}
 		}
 	};
-	template<typename T> struct PushToLua<std::vector<T>> {
+	template<typename T> struct PushToLua<std::vector<T> > {
 		static void push(lua_State* L, const std::vector<T>& value) {
 			lua_newtable(L);
 			for (unsigned i = 1; i <= value.size(); ++i) {

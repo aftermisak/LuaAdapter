@@ -21,7 +21,7 @@ namespace LuaAdapter{
 	struct CallImp;
 
 	template<typename Return>
-	struct CallImp<Return, LuaParmList<>>
+	struct CallImp<Return, LuaParmList<> >
 	{
 		template<typename T, typename Fun, typename ParmList>
 		inline static Return callMember(T* obj, Fun f, const ParmList& parmList){
@@ -35,7 +35,7 @@ namespace LuaAdapter{
 	};
 
 	template<typename Return, typename Parm1>
-	struct CallImp<Return, LuaParmList<Parm1>>
+	struct CallImp<Return, LuaParmList<Parm1> >
 	{
 		template<typename T, typename Fun, typename ParmList>
 		inline static Return callMember(T* obj, Fun f, const ParmList& parmList){
@@ -49,7 +49,7 @@ namespace LuaAdapter{
 	};
 
 	template<typename Return, typename Parm1, typename Parm2>
-	struct CallImp<Return, LuaParmList<Parm1, Parm2>>
+	struct CallImp<Return, LuaParmList<Parm1, Parm2> >
 	{
 		template<typename T, typename Fun, typename ParmList>
 		inline static Return callMember(T* obj, Fun f, const ParmList& parmList){
@@ -62,7 +62,7 @@ namespace LuaAdapter{
 	};
 
 	template<typename Return, typename Parm1, typename Parm2, typename Parm3>
-	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3>>
+	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3> >
 	{
 		template<typename T, typename Fun, typename ParmList>
 		inline static Return callMember(T* obj, Fun f, const ParmList& parmList) {
@@ -75,7 +75,7 @@ namespace LuaAdapter{
 	};
 
 	template<typename Return, typename Parm1, typename Parm2, typename Parm3, typename Parm4>
-	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3, Parm4>>
+	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3, Parm4> >
 	{
 		template<typename T, typename Fun, typename ParmList>
 		inline static Return callMember(T* obj, Fun f, const ParmList& parmList) {
@@ -87,7 +87,7 @@ namespace LuaAdapter{
 		}
 	};
 	template<typename Return, typename Parm1, typename Parm2, typename Parm3, typename Parm4, typename Param5>
-	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3, Parm4, Param5>>
+	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3, Parm4, Param5> >
 	{
 		template<typename T, typename Fun, typename ParmList>
 		inline static Return callMember(T* obj, Fun f, const ParmList& parmList) {
@@ -101,7 +101,7 @@ namespace LuaAdapter{
 		}
 	};
 	template<typename Return, typename Parm1, typename Parm2, typename Parm3, typename Parm4, typename Param5, typename Param6>
-	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3, Parm4, Param5, Param6>>
+	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3, Parm4, Param5, Param6> >
 	{
 		template<typename T, typename Fun, typename ParmList>
 		inline static Return callMember(T* obj, Fun f, const ParmList& parmList) {
@@ -115,7 +115,7 @@ namespace LuaAdapter{
 		}
 	};
 	template<typename Return, typename Parm1, typename Parm2, typename Parm3, typename Parm4, typename Param5, typename Param6, typename Param7>
-	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3, Parm4, Param5, Param6, Param7>>
+	struct CallImp<Return, LuaParmList<Parm1, Parm2, Parm3, Parm4, Param5, Param6, Param7> >
 	{
 		template<typename T, typename Fun, typename ParmList>
 		inline static Return callMember(T* obj, Fun f, const ParmList& parmList) {
@@ -238,39 +238,42 @@ namespace LuaAdapter{
 			return ReturnCount<Fun>::result;
 		}
 	};
-
-	template<typename EType>
-	struct EnumToIntType {
-		static_assert(std::is_enum<EType>::value, "logic error");
-		template< int Size >
-		struct SizeToInt;
-
-		template<> struct SizeToInt<4> {
-			typedef int32_t type;
-		};
-
-		template<> struct SizeToInt<8> {
-			typedef int64_t type;
-		};
-
-		typedef typename SizeToInt<sizeof(EType)>::type type;
-	};
-
-	template<typename T>
-	struct EnumTypeToIntIfNeed {
-		template<typename T, typename TOrF> struct _ACast;
-		template<typename T> struct _ACast<T, std::true_type> { typedef typename EnumToIntType<T>::type type; };
-		template<typename T> struct _ACast<T, std::false_type> { typedef T type; };
+    
+    namespace{
+        template< int Size >
+        struct SizeToInt;
+        
+        template<> struct SizeToInt<4> {
+            typedef int32_t type;
+        };
+        
+        template<> struct SizeToInt<8> {
+            typedef int64_t type;
+        };
+        
+        template<typename EType>
+        struct EnumToIntType {
+            static_assert(std::is_enum<EType>::value, "logic error");
+            typedef typename SizeToInt<sizeof(EType)>::type type;
+        };
+        
+        template<typename T, typename TOrF> struct _ACast;
+        template<typename T> struct _ACast<T, std::true_type> { typedef typename EnumToIntType<T>::type type; };
+        template<typename T> struct _ACast<T, std::false_type> { typedef T type; };
+        
+        template<typename T>
+        struct EnumTypeToIntIfNeed {
+            typedef typename _ACast<T, typename std::is_enum<T>::type>::type type;
+        };
+    }
 	
-		typedef typename _ACast<T, typename std::is_enum<T>::type>::type type;
-	};
 
 	template<typename Pointer>
 	struct ToLuaDataGet;
 
-	template<typename T>
-	struct ToLuaDataGet<T*>{
-		typedef typename EnumTypeToIntIfNeed<T>::type T;
+	template<typename T_>
+	struct ToLuaDataGet<T_*>{
+		typedef typename EnumTypeToIntIfNeed<T_>::type T;
 		static int fun(lua_State* L){
 			void* userdata = lua_touserdata(L, lua_upvalueindex(1));
 			T** p = static_cast<T**>(userdata);
@@ -281,9 +284,9 @@ namespace LuaAdapter{
 		}
 	};
 
-	template<typename T, typename C>
-	struct ToLuaDataGet<T C::*>{
-		typedef typename EnumTypeToIntIfNeed<T>::type T;
+	template<typename T_, typename C>
+	struct ToLuaDataGet<T_ C::*>{
+		typedef typename EnumTypeToIntIfNeed<T_>::type T;
 		static int fun(lua_State* L){
 			void* userdata = lua_touserdata(L, lua_upvalueindex(1));
 			T C::** p = static_cast<T C::**>(userdata);
@@ -298,9 +301,9 @@ namespace LuaAdapter{
 	struct ToLuaDataSet;
 
 	//static var partial specialization
-	template<typename T>
-	struct ToLuaDataSet<T*>{
-		typedef typename EnumTypeToIntIfNeed<T>::type T;
+	template<typename T_>
+	struct ToLuaDataSet<T_*>{
+		typedef typename EnumTypeToIntIfNeed<T_>::type T;
 		static int fun(lua_State* L){
 
 			if (std::is_const<T>::value){
@@ -331,9 +334,9 @@ namespace LuaAdapter{
 	};
 
 	//member var partial specialization
-	template<typename T, typename C>
-	struct ToLuaDataSet<T C::*>{
-		typedef typename EnumTypeToIntIfNeed<T>::type T;
+	template<typename T_, typename C>
+	struct ToLuaDataSet<T_ C::*>{
+		typedef typename EnumTypeToIntIfNeed<T_>::type T;
 		static int fun(lua_State* L){
 
 			if (std::is_const<T>::value){

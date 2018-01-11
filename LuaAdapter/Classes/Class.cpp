@@ -23,11 +23,11 @@ namespace LuaAdapter {
 		}
 	};
 
-	static std::unordered_multimap< std::pair<unsigned, unsigned>, int, RecordHash > quickOffsetRecord;
+	static std::unordered_multimap< std::pair<unsigned, unsigned>, ptrdiff_t, RecordHash > quickOffsetRecord;
 }
 
 
-void LuaAdapter::addOffsetRecord(unsigned h1, unsigned h2, int offset) {
+void LuaAdapter::addOffsetRecord(unsigned h1, unsigned h2, ptrdiff_t offset) {
 	if (quickOffsetRecord.find(make_pair(h1, h2)) != quickOffsetRecord.end()) {
 		return;
 	}
@@ -42,7 +42,7 @@ void LuaAdapter::addOffsetRecord(unsigned h1, unsigned h2, int offset) {
 
 	
 }
-std::pair<bool, int> LuaAdapter::getOffsetRecord(unsigned h1, unsigned h2) {
+std::pair<bool, ptrdiff_t> LuaAdapter::getOffsetRecord(unsigned h1, unsigned h2) {
 	auto iter = quickOffsetRecord.find(make_pair(h1, h2));
 	if (iter == quickOffsetRecord.end()) {
 		return make_pair(false, 0);

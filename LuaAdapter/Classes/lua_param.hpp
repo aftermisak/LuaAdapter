@@ -29,7 +29,8 @@ namespace LuaAdapter {
 #define gener_luaparm_for_int(inttype) \
 	template<> \
 	struct LuaParm<inttype> : public LuaParmInt<std::remove_const<inttype>::type> { \
-		using LuaParmInt::LuaParmInt; \
+        LuaParm(lua_State* L, int index):LuaParmInt(L, index){ \
+        }\
 	}; 
 
 	gener_luaparm_for_int(char)
@@ -57,7 +58,8 @@ namespace LuaAdapter {
 #define gener_luaparm_for_float(floattype) \
 	template<> \
 	struct LuaParm<floattype> : public LuaParamFloat< std::remove_const<floattype>::type > { \
-		using LuaParamFloat::LuaParamFloat; \
+        LuaParm(lua_State* L, int index):LuaParamFloat(L, index){ \
+        }\
 	}; 
 
 	gener_luaparm_for_float(float)
@@ -76,7 +78,8 @@ namespace LuaAdapter {
 #define gener_luaparm_for_string(str_type) \
 	template<>\
 	struct LuaParm<str_type> : public LuaParamString{ \
-		using LuaParamString::LuaParamString;\
+        LuaParm(lua_State* L, int index):LuaParamString(L, index){ \
+        }\
 	};
 
 	gener_luaparm_for_string(const char*)
@@ -103,7 +106,7 @@ namespace LuaAdapter {
 	
 
 	template<typename T>
-	struct LuaParm<std::list<T>>{
+	struct LuaParm< std::list<T> >{
 		std::list<T> value;
 		LuaParm(lua_State* L, int index) {
 			luaL_checktype(L, index, LUA_TTABLE);
@@ -117,16 +120,16 @@ namespace LuaAdapter {
 		}
 	};
 	template<typename T>
-	struct LuaParm<const std::list<T>> : public LuaParm<std::list<T>> {
-		using LuaParm<std::list<T>>::LuaParm;
+	struct LuaParm< const std::list<T> > : public LuaParm< std::list<T> > {
+        LuaParm(lua_State* L, int index):LuaParm(L, index){}
 	};
 	template<typename T>
-	struct LuaParm<const std::list<T>&> : public LuaParm<std::list<T>> {
-		using LuaParm<std::list<T>>::LuaParm;
+	struct LuaParm<const std::list<T>&> : public LuaParm< std::list<T> > {
+		LuaParm(lua_State* L, int index):LuaParm(L, index){}
 	};
 
 	template<typename T>
-	struct LuaParm<std::vector<T>>{
+	struct LuaParm<std::vector<T> >{
 		std::vector<T> value;
 		LuaParm(lua_State* L, int index) {
 			luaL_checktype(L, index, LUA_TTABLE);
@@ -141,12 +144,12 @@ namespace LuaAdapter {
 		}
 	};
 	template<typename T>
-	struct LuaParm<const std::vector<T>> : public LuaParm<std::vector<T>> {
-		using LuaParm<std::vector<T>>::LuaParm;
+	struct LuaParm<const std::vector<T> > : public LuaParm<std::vector<T> > {
+		LuaParm(lua_State* L, int index):LuaParm(L, index){}
 	};
 	template<typename T>
-	struct LuaParm<const std::vector<T>&> : public LuaParm<std::vector<T>> {
-		using LuaParm<std::vector<T>>::LuaParm;
+	struct LuaParm<const std::vector<T>&> : public LuaParm<std::vector<T> > {
+		LuaParm(lua_State* L, int index):LuaParm(L, index){}
 	};
 
 	template<typename TKey, typename TValue>
@@ -170,12 +173,12 @@ namespace LuaAdapter {
 	};
 
 	template<typename TKey, typename TValue>
-	struct LuaParm< const std::unordered_map<TKey, TValue> > : public LuaParm<std::unordered_map<TKey, TValue>> {
-		using LuaParm<std::unordered_map<TKey, TValue>>::LuaParm;
+	struct LuaParm< const std::unordered_map<TKey, TValue> > : public LuaParm<std::unordered_map<TKey, TValue> > {
+		LuaParm(lua_State* L, int index):LuaParm(L, index){}
 	};
 	template<typename TKey, typename TValue>
-	struct LuaParm< const std::unordered_map<TKey, TValue>& > : public LuaParm<std::unordered_map<TKey, TValue>> {
-		using LuaParm<std::unordered_map<TKey, TValue>>::LuaParm;
+	struct LuaParm< const std::unordered_map<TKey, TValue>& > : public LuaParm<std::unordered_map<TKey, TValue> > {
+		LuaParm(lua_State* L, int index):LuaParm(L, index){}
 	};
 
 

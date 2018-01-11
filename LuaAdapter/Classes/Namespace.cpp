@@ -1,5 +1,5 @@
 #include "Namespace.hpp"
-
+#include "Class.hpp"
 using namespace LuaAdapter;
 
 static const string lua_adapter_namespace_token = "hidden in dark";

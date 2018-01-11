@@ -6,11 +6,12 @@
 #include <string>
 #include <unordered_map>
 #include <typeindex>
+#include "Namespace.hpp"
 
 namespace LuaAdapter{
 
-	void addOffsetRecord(unsigned h1, unsigned h2, int offset);
-	std::pair<bool, int> getOffsetRecord(unsigned h1, unsigned h2);
+	void addOffsetRecord(unsigned h1, unsigned h2, ptrdiff_t offset);
+	std::pair<bool, ptrdiff_t> getOffsetRecord(unsigned h1, unsigned h2);
 	namespace {
 		template<typename Sub, typename ...Suppers>
 		struct AddOffsetRecord;
@@ -24,13 +25,14 @@ namespace LuaAdapter{
 		};
 		template<typename Sub, typename Supper>
 		struct AddOffsetRecord< Sub, Supper > {
-			static_assert(std::is_base_of<Supper, Sub>::value, "error");
+//            static_assert(std::is_base_of<Supper, Sub>, "error");
 			static void doit() {
 				const type_info& sub_info = typeid(Sub);
 				const type_info& supper_info = typeid(Supper);
 				Sub* psub = reinterpret_cast<Sub*>(100000);
 				Supper* psup = static_cast<Supper*>(psub);
-				int offset_super_to_sub = int(psup) - int(psub);
+                
+				ptrdiff_t offset_super_to_sub = ptrdiff_t(psup) - ptrdiff_t(psub);
 				addOffsetRecord(sub_info.hash_code(), supper_info.hash_code(), offset_super_to_sub);
 				addOffsetRecord(supper_info.hash_code(), sub_info.hash_code(), -offset_super_to_sub);
 			}
@@ -80,7 +82,7 @@ namespace LuaAdapter{
 					}
 				}
 			} while (false);
-			value = reinterpret_cast<UserClass*>( (int)(userdata->obj) + offset );
+			value = reinterpret_cast<UserClass*>( (ptrdiff_t)userdata->obj + offset );
 		}
 	};
 
@@ -94,7 +96,7 @@ namespace LuaAdapter{
 			objUserData->needDestruction = false;
 			const type_info& tinfo = typeid(TheType);
 			objUserData->tIndex = std::type_index(tinfo);
-			std::string className = Namespace::getClassNameByTypeInfo(tinfo);
+            std::string className = LuaAdapter::Namespace::getClassNameByTypeInfo(tinfo);
 			lua_getglobal(L, "luaAdapter_lua_getObjectMetatable");
 			lua_pushstring(L, className.c_str());
 			lua_call(L, 1, 1);

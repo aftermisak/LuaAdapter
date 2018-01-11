@@ -6,7 +6,6 @@
 #include <cassert>
 #include <memory>
 #include "RegisterImplementation.hpp"
-#include "Class.hpp"
 #include <typeinfo>
 #include <unordered_map>
 #include <unordered_set>
@@ -14,6 +13,7 @@
 using namespace std;
 
 namespace LuaAdapter{
+	class Class;
 
 	class Namespace{
 	public:
