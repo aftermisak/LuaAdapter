@@ -23,6 +23,7 @@
     LuaParm支持了一些常见的数字，字符串，STL标准库类型，但是一旦使用，可能需要扩展，比如我的另外
 一个程序中，使用了glm库，需要向cpp传glm::vec3,glm::vec4等参数，那么就需要在LuaAdapter命名空间下
 实现以下
+` ``cpp
 	template<> struct LuaParm<glm::vec3> {
 		glm::vec3 value;
 		LuaParm(lua_State* L, int index) {
@@ -54,10 +55,11 @@
 	template<> struct LuaParm<const glm::vec4&> : public LuaParm<glm::vec4> {
 		using LuaParm<glm::vec4>::LuaParm;
 	};
-
+` ``
 
     扩展cpp传入lua时支持的类型 template<> PushToLua:
     与LuaParm类似，它是个反过程，它需要的是将一个对象正确创建并且压倒lua栈上。
+` ``cpp
     template< >
 	struct PushToLua<glm::vec3>{
 		static void push(lua_State* L, const glm::vec3& value) {
@@ -89,4 +91,4 @@
 	};
 
 	template< > struct PushToLua<const glm::vec4&> : public PushToLua<glm::vec4> {};
-
+` ``
