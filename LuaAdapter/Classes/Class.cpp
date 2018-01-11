@@ -51,7 +51,7 @@ std::pair<bool, ptrdiff_t> LuaAdapter::getOffsetRecord(unsigned h1, unsigned h2)
 }
 
 
-
+static std::unordered_set<std::string> initRecord;
 
 static void luaadapter_no_destruction(ObjUserData* objUserData) {
 	objUserData->needDestruction = false;
@@ -61,9 +61,13 @@ Class::Class(lua_State* L, const string& name) :
 	_L(L),
 	_name(name)
 {
-	begin();
-	registerFunction(&luaadapter_no_destruction, "no_destruction__");
-	end();
+	if (initRecord.find(name) != initRecord.end()) {
+		begin();
+		registerFunction(&luaadapter_no_destruction, "no_destruction__");
+		end();
+		initRecord.insert(name);
+	}
+	
 }
 
 void Class::begin(){
