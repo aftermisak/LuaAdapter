@@ -1,17 +1,17 @@
 # LuaAdapter
-一个C++模板库，提供一套将命名空间、类、变量、函数等，注册到lua环境的方案。 并且支持扩展
-它非常像另外一个开源库LuaBridge，该库使用了一些c++11的特性，对实现和支持做出了一些改动
+一个C++模板库，提供一套将命名空间、类、变量、函数等，注册到lua环境的方案。 并且支持扩展<br/>
+它非常像另外一个开源库LuaBridge，该库使用了一些c++11的特性，对实现和支持做出了一些改动<br/>
 
 ## 特性
-使用MIT Licensed
-除了lua环境，不需要依赖别的库，但是需要编译器尽量好的支持c++11
-支持将多继承模型的cpp类注册到lua环境中
+使用MIT Licensed<br/>
+除了lua环境，不需要依赖别的库，但是需要编译器尽量好的支持c++11<br/>
+支持将多继承模型的cpp类注册到lua环境中<br/>
 
 ## 示例与测试代码
-在Test目录下，有一些测试，也是使用的例子
-simple_test 怎么注册命名空间，类，静态方法，成员方法，静态变量，成员变量到lua环境中
-extends_test 怎么注册类之间的继承关系
-construction_destruction 为类注册构造和析构，提供了一种策略来进行生命周期管理
+在Test目录下，有一些测试，也是使用的例子:<br/>
+simple_test 怎么注册命名空间，类，静态方法，成员方法，静态变量，成员变量到lua环境中<br/>
+extends_test 怎么注册类之间的继承关系<br/>
+construction_destruction 为类注册构造和析构，提供了一种策略来进行生命周期管理<br/>
 
 ## 关于生命周期管理
   对象的生命周期管理，是一个便随着cpp开发的问题，如果你使用类似于cocos2d-x这类的引擎，那么
@@ -21,7 +21,7 @@ construction_destruction 为类注册构造和析构，提供了一种策略来�
 把生命周期交给cpp层管理
 	
 ## 扩展
-扩展lua传入cpp时支持的类型 template<> LuaParm:
+扩展lua传入cpp时支持的类型 template<> LuaParm:<br/>
     LuaParm支持了一些常见的数字，字符串，STL标准库类型，但是一旦使用，可能需要扩展，比如我的另外
 一个程序中，使用了glm库，需要向cpp传glm::vec3,glm::vec4等参数，那么就需要在LuaAdapter命名空间下
 实现以下内容:
@@ -59,7 +59,7 @@ template<> struct LuaParm<const glm::vec4&> : public LuaParm<glm::vec4> {
 };
 ```
 
-扩展cpp传入lua时支持的类型 template<> PushToLua:
+扩展cpp传入lua时支持的类型 template<> PushToLua:<br/>
     与LuaParm类似，它是个反过程，它需要的是将一个对象正确创建并且压倒lua栈上。
 
 ```cpp
